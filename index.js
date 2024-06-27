@@ -1,17 +1,16 @@
-require('dotenv').config();
+
+require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
 const app = express();
 const {MongoClient} = require('mongodb')
 
-const uriPROV ='mongodb+srv://FCCtraining:fcctrain1@cluster0.qquxbky.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
-const client = new MongoClient(uriPROV)
+const client = new MongoClient(process.env.URI_KEY)
 const db = client.db("urlshortner")
 const urls = db.collection("urls")
 const dns = require('dns')
 const urlparser =require('url');
-const { error } = require('console');
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -31,6 +30,7 @@ app.post('/api/shorturl', function(req, res) {
   console.log(req.body)
   const url = req.body.url
   const dnslookup = dns.lookup(urlparser.parse(url).hostname,async(err,address) =>{
+    if(err) return console.log(err)
     if(!address){
       res.json({error:'invalid url'})
     }
